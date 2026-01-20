@@ -33,7 +33,7 @@ app.use(cors({
 }));
 
 // Handle preflight requests for all routes
-app.options('*', cors());
+app.options('/{*path}', cors());
 
 // 2. Request Logger
 app.use((req, res, next) => {
