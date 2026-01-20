@@ -9,22 +9,22 @@ connectDB();
 const app = express();
 
 // Middleware
-// 1. CORS - Configured for production with Vercel
-const allowedOrigins = [
-    'https://e-commerce-react-brown-tau.vercel.app',
-    'http://localhost:5173',
-    'http://localhost:3000'
-];
-
 app.use(cors({
     origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
+        // Allow requests with no origin (like mobile apps)
         if (!origin) return callback(null, true);
 
-        if (allowedOrigins.indexOf(origin) !== -1 || origin.includes('vercel.app')) {
+        const allowedOrigins = [
+            'https://e-commerce-react-brown-tau.vercel.app',
+            'http://localhost:5173',
+            'http://localhost:3000'
+        ];
+
+        // Allow if origin is in allowed list or is a vercel subdomain
+        if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.vercel.app')) {
             callback(null, true);
         } else {
-            callback(null, true); // Allow all origins for now
+            callback(new Error('Not allowed by CORS'));
         }
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
@@ -32,8 +32,8 @@ app.use(cors({
     credentials: true
 }));
 
-// Handle preflight requests for all routes
-app.options('/{*path}', cors());
+// Handle preflight requests
+app.options('*', cors());
 
 // 2. Request Logger
 app.use((req, res, next) => {
