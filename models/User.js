@@ -31,6 +31,18 @@ const userSchema = new mongoose.Schema({
     profilePic: {
         type: String,
         default: ''
+    },
+    address: {
+        type: String,
+        default: ''
+    },
+    city: {
+        type: String,
+        default: ''
+    },
+    country: {
+        type: String,
+        default: 'Bangladesh'
     }
 }, {
     timestamps: true

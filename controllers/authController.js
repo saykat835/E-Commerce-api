@@ -107,6 +107,11 @@ const updateUserProfile = async (req, res) => {
             user.phone = req.body.phone !== undefined ? req.body.phone : user.phone;
             user.profilePic = req.body.profilePic !== undefined ? req.body.profilePic : user.profilePic;
 
+            // Additional Profile Fields
+            if (req.body.address) user.address = req.body.address;
+            if (req.body.city) user.city = req.body.city;
+            if (req.body.country) user.country = req.body.country;
+
             if (req.body.password) {
                 user.password = req.body.password;
             }
@@ -121,6 +126,9 @@ const updateUserProfile = async (req, res) => {
                 role: updatedUser.role,
                 balance: updatedUser.balance,
                 profilePic: updatedUser.profilePic,
+                address: updatedUser.address,
+                city: updatedUser.city,
+                country: updatedUser.country,
                 token: generateToken(updatedUser._id),
             });
         } else {
