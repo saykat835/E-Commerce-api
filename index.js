@@ -9,31 +9,29 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps)
-        if (!origin) return callback(null, true);
+// Custom CORS Middleware
+app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    const allowedOrigins = [
+        'https://e-commerce-react-brown-tau.vercel.app',
+        'https://e-commerce-pl70z28dd-only-html.vercel.app', // Adding backend itself just in case
+        'http://localhost:5173',
+        'http://localhost:3000'
+    ];
 
-        const allowedOrigins = [
-            'https://e-commerce-react-brown-tau.vercel.app',
-            'http://localhost:5173',
-            'http://localhost:3000'
-        ];
+    if (allowedOrigins.includes(origin) || (origin && origin.includes('vercel.app'))) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
 
-        // Allow if origin is in allowed list or is a vercel subdomain
-        if (allowedOrigins.indexOf(origin) !== -1 || origin.endsWith('.vercel.app')) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-    credentials: true
-}));
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, X-CSRF-Token');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
 
-// Handle preflight requests
-app.options('*', cors());
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+    next();
+});
 
 // 2. Request Logger
 app.use((req, res, next) => {
